@@ -16,48 +16,60 @@
 </head>
 <body>
   <header>
-    <div class="title">
-      <div style="width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#22d3ee);"></div>
-      信息卡片生成器-V3.8
-    </div>
-    <div class="actions">
-        <div class="header-controls">
-            <div class="control-group">
-                <label for="themeToggle">模式</label>
-                <select id="themeToggle">
-                  <option value="light">浅色</option>
-                  <option value="dark">深色</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label for="aspectRatio">比例</label>
-                <select id="aspectRatio">
-                  <option value="3/4">竖向 (3:4)</option>
-                  <option value="4/3">横向 (4:3)</option>
-                  <option value="1/1">方形 (1:1)</option>
-                  <option value="9/16">故事 (9:16)</option>
-                  <option value="16/9">宽屏 (16:9)</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label for="resolution">分辨率</label>
-                <select id="resolution">
-                  <option value="1">标准 (1x)</option>
-                  <option value="2" selected>高清 (2x)</option>
-                  <option value="3">超清 (3x)</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label for="theme-selector">应用主题</label>
-                <select id="theme-selector">
-                  </select>
-            </div>
-            <button class="btn-secondary" id="btn-apply-theme" style="padding: 6px 10px; font-size: 14px; height: 35px;">应用</button>
+    <div class="header-main">
+      <div class="title">
         </div>
-      <button class="btn-secondary" id="btn-save-config">保存配置</button>
-      <button class="btn-secondary" id="btn-load-config">载入配置</button>
-      <button class="btn-danger" id="btn-reset-all">重置所有</button>
-      <button id="btn-export-zip">全部下载 (ZIP)</button>
+      <div class="header-primary-actions">
+        <button id="btn-export-zip-mobile" class="btn-primary-mobile">下载</button>
+        <button class="header-menu-toggle" id="header-menu-toggle" aria-label="菜单">
+          <span class="menu-icon">☰</span>
+        </button>
+      </div>
+    </div>
+    <div class="header-expanded" id="header-expanded">
+      <div class="header-controls">
+        <div class="control-group">
+          <label for="themeToggle">模式</label>
+          <select id="themeToggle">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="aspectRatio">比例</label>
+          <select id="aspectRatio">
+            <option value="3/4">竖向 (3:4)</option>
+            <option value="4/3">横向 (4:3)</option>
+            <option value="1/1">方形 (1:1)</option>
+            <option value="9/16">故事 (9:16)</option>
+            <option value="16/9">宽屏 (16:9)</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="resolution">分辨率</label>
+          <select id="resolution">
+            <option value="1">标准 (1x)</option>
+            <option value="2" selected>高清 (2x)</option>
+            <option value="3">超清 (3x)</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="theme-selector">应用主题</label>
+          <select id="theme-selector">
+          </select>
+        </div>
+        <button class="btn-secondary" id="btn-apply-theme" style="padding: 6px 10px; font-size: 14px; height: 35px;">应用</button>
+      </div>
+      <div class="header-secondary-actions">
+        <button class="btn-danger" id="btn-reset-all">
+          <span class="btn-text-full">重置所有</span>
+          <span class="btn-text-mobile">重置</span>
+        </button>
+        <button id="btn-export-zip" class="btn-primary-desktop">
+          <span class="btn-text-full">全部下载 (ZIP)</span>
+          <span class="btn-text-mobile">下载 ZIP</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -191,334 +203,351 @@
       
       <div class="tab-content" data-tab-panel="style">
         <div class="group">
-            <div class="label-with-switch">
-                <label for="unifiedStylingEnabled" style="font-size: 14px; color: var(--text); font-weight: 600;">应用统一配置到所有卡片</label>
-                <input type="checkbox" id="unifiedStylingEnabled" />
-            </div>
-            <div class="note">启用后，下方配置将覆盖所有卡片的独立样式。</div>
+          <div class="label-with-switch">
+              <label for="unifiedStylingEnabled" style="font-size: 14px; color: var(--text); font-weight: 600;">应用统一配置到所有卡片</label>
+              <input type="checkbox" id="unifiedStylingEnabled" />
+          </div>
         </div>
-        
         <div id="unifiedStylingControls" style="display: none;">
-            <div class="group-divider"></div>
-            <h3>统一配置 (所有卡片)</h3>
-            <div class="group row">
-              <div>
-                <label>标题字体 (统一)</label>
-                <select id="unifiedFontTitle"></select>
-              </div>
-              <div>
-                <label>正文字体 (统一)</label>
-                <select id="unifiedFontBody"></select>
-              </div>
-            </div>
-            <div class="group row">
-              <div>
-                <label>标题颜色 (统一)</label>
-                <input id="unifiedColorTitle" type="color" value="#ffffff" />
-              </div>
-              <div>
-                <label>正文颜色 (统一)</label>
-                <input id="unifiedColorBody" type="color" value="#e5e7eb" />
-              </div>
-            </div>
-            <div class="group row">
-              <div>
-                <div class="label-with-slider">
-                    <label>标题字号 (统一)</label>
-                    <span class="range-value" id="unifiedSizeTitleValue">42px</span>
-                </div>
-                <input id="unifiedSizeTitle" type="range" min="20" max="80" step="1" value="42" />
-              </div>
-              <div>
-                <div class="label-with-slider">
-                    <label>正文字号 (统一)</label>
-                    <span class="range-value" id="unifiedSizeBodyValue">20px</span>
-                </div>
-                <input id="unifiedSizeBody" type="range" min="12" max="40" step="1" value="20" />
-              </div>
-            </div>
-             <div class="group">
-                <div class="label-with-slider">
-                    <label for="unifiedLineHeight">正文行间距 (统一)</label>
-                    <span class="range-value" id="unifiedLineHeightValue">1.60</span>
-                </div>
-                <input id="unifiedLineHeight" type="range" min="1.0" max="2.5" step="0.05" value="1.6" />
-            </div>
-            <div class="group row">
-                <div>
-                    <label>水平对齐 (统一)</label>
-                    <div class="align-group" id="unifiedAlignHorizontal">
-                      <button data-align="flex-start">左</button>
-                      <button data-align="center">中</button>
-                      <button data-align="flex-end">右</button>
-                    </div>
-                </div>
-                <div>
-                    <label>垂直对齐 (统一)</label>
-                    <div class="align-group" id="unifiedAlignVertical">
-                      <button data-align="flex-start">顶</button>
-                      <button data-align="center">中</button>
-                      <button data-align="flex-end">底</button>
-                    </div>
-                </div>
-            </div>
-            <div class="group">
-              <div class="label-with-slider">
-                <label for="unifiedPadding">内边距 (统一)</label>
-                <span class="range-value" id="unifiedPaddingValue">8%</span>
-              </div>
-              <input id="unifiedPadding" type="range" min="2" max="20" step="1" value="8" />
-            </div>
-            <div class="group group-divider">
-              <div class="label-with-switch">
-                  <label for="unifiedBorderEnabled">显示边框 (统一)</label>
-                  <input type="checkbox" id="unifiedBorderEnabled" />
-              </div>
-            </div>
-            <div class="group row" id="unifiedBorderControls">
-              <div>
-                  <div class="label-with-slider">
-                    <label>边框厚度 (统一)</label>
-                    <span class="range-value" id="unifiedBorderWidthValue">15px</span>
+          <h3>统一配置</h3>
+          <div class="note" style="margin-top: -5px; margin-bottom: 10px;">所有卡片的样式都将使用以下设置。</div>
+          
+          <div class="accordion-group active">
+              <div class="accordion-header"><h3>统一文字样式</h3></div>
+              <div class="accordion-content">
+                  <div class="group row">
+                      <div>
+                          <label>标题字体</label>
+                          <select id="unifiedFontTitle">
+                              </select>
+                      </div>
+                      <div>
+                          <label>正文字体</label>
+                          <select id="unifiedFontBody">
+                              </select>
+                      </div>
                   </div>
-                  <input id="unifiedBorderWidth" type="range" min="0" max="50" step="1" value="15" />
-              </div>
-              <div>
-                  <label>边框颜色 (统一)</label>
-                  <input id="unifiedBorderColor" type="color" value="#ffffff" />
-              </div>
-            </div>
-            <div class="group row">
-                <div>
-                    <div class="label-with-slider">
-                        <label>外框圆角 (统一)</label>
-                        <span class="range-value" id="unifiedRadiusOuterValue">16px</span>
+                  <div class="group row">
+                      <div>
+                          <label>标题颜色</label>
+                          <input id="unifiedColorTitle" type="color" value="#ffffff" />
+                      </div>
+                      <div>
+                          <label>正文颜色</label>
+                          <input id="unifiedColorBody" type="color" value="#e5e7eb" />
+                      </div>
+                  </div>
+                  <div class="group row">
+                      <div>
+                          <div class="label-with-slider">
+                              <label>标题字号 (px)</label>
+                              <span class="range-value" id="unifiedSizeTitleValue">42px</span>
+                          </div>
+                          <input id="unifiedSizeTitle" type="range" min="16" max="120" step="1" value="42" />
+                      </div>
+                      <div>
+                          <div class="label-with-slider">
+                              <label>正文字号 (px)</label>
+                              <span class="range-value" id="unifiedSizeBodyValue">20px</span>
+                          </div>
+                          <input id="unifiedSizeBody" type="range" min="12" max="60" step="1" value="20" />
+                      </div>
+                  </div>
+                  <div class="group row">
+                    <div style="flex-grow: 1;">
+                      <div class="label-with-slider">
+                          <label>行高 (倍)</label>
+                          <span class="range-value" id="unifiedLineHeightValue">1.6</span>
+                      </div>
+                      <input id="unifiedLineHeight" type="range" min="1" max="2.5" step="0.1" value="1.6" />
                     </div>
-                    <input id="unifiedRadiusOuter" type="range" min="0" max="60" step="1" value="16" />
-                </div>
-                <div>
-                    <div class="label-with-slider">
-                        <label>卡片圆角 (统一)</label>
-                        <span class="range-value" id="unifiedRadiusInnerValue">12px</span>
-                    </div>
-                    <input id="unifiedRadiusInner" type="range" min="0" max="50" step="1" value="12" />
-                </div>
-            </div>
+                  </div>
+              </div>
+          </div>
+
+          <div class="accordion-group">
+              <div class="accordion-header"><h3>统一布局与边框</h3></div>
+              <div class="accordion-content">
+                  <div class="group row">
+                      <div>
+                          <label>水平对齐</label>
+                          <div class="toggle-group" id="unifiedAlignHorizontal">
+                            <button data-align="flex-start" title="左对齐">左</button>
+                            <button data-align="center" class="active" title="居中">中</button>
+                            <button data-align="flex-end" title="右对齐">右</button>
+                          </div>
+                      </div>
+                      <div>
+                          <label>垂直对齐</label>
+                          <div class="toggle-group" id="unifiedAlignVertical">
+                            <button data-align="flex-start" title="顶部对齐">顶</button>
+                            <button data-align="center" class="active" title="居中">中</button>
+                            <button data-align="flex-end" title="底部对齐">底</button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="group">
+                      <div class="label-with-slider">
+                          <label>内边距 (百分比)</label>
+                          <span class="range-value" id="unifiedPaddingValue">8%</span>
+                      </div>
+                      <input id="unifiedPadding" type="range" min="0" max="20" step="1" value="8" />
+                      <div class="note">内边距是相对于卡片宽度或高度的百分比。</div>
+                  </div>
+
+                  <div class="group group-divider">
+                      <div class="label-with-switch">
+                        <label for="unifiedBorderEnabled">启用外边框</label>
+                        <input type="checkbox" id="unifiedBorderEnabled" />
+                      </div>
+                  </div>
+                  <div class="group row" id="unifiedBorderControls" style="display: none;">
+                      <div>
+                          <div class="label-with-slider">
+                              <label>边框厚度 (px)</label>
+                              <span class="range-value" id="unifiedBorderWidthValue">15px</span>
+                          </div>
+                          <input id="unifiedBorderWidth" type="range" min="0" max="50" step="1" value="15" />
+                      </div>
+                      <div>
+                          <label>边框颜色</label>
+                          <input id="unifiedBorderColor" type="color" value="#ffffff" />
+                      </div>
+                  </div>
+                  <div class="group row">
+                      <div>
+                          <div class="label-with-slider">
+                              <label>外框圆角 (统一)</label>
+                              <span class="range-value" id="unifiedRadiusOuterValue">16px</span>
+                          </div>
+                          <input id="unifiedRadiusOuter" type="range" min="0" max="60" step="1" value="16" />
+                      </div>
+                      <div>
+                          <div class="label-with-slider">
+                              <label>卡片圆角 (统一)</label>
+                              <span class="range-value" id="unifiedRadiusInnerValue">12px</span>
+                          </div>
+                          <input id="unifiedRadiusInner" type="range" min="0" max="50" step="1" value="12" />
+                      </div>
+                  </div>
+              </div>
+          </div>
         </div>
-        
+
         <div id="individualStylingControls" style="display: block;">
-            <div class="group-divider"></div>
-            <h3>当前卡片独立样式</h3>
-            <div class="note" style="margin-top: -5px; margin-bottom: 10px;">当“统一配置”关闭时，以下设置为当前卡片生效。</div>
-            
-            <div class="accordion-group">
+          <div class="group-divider"></div>
+          <h3>当前卡片独立样式</h3>
+          <div class="note" style="margin-top: -5px; margin-bottom: 10px;">当“统一配置”关闭时，以下设置为当前卡片生效。</div>
+
+          <div class="accordion-group active">
               <div class="accordion-header"><h3>文字样式</h3></div>
               <div class="accordion-content">
-                <div class="group row">
-                  <div>
-                    <label>标题字体</label>
-                    <select id="fontTitle">
-                      <option value="'Noto Sans SC', sans-serif">思源黑体</option>
-                      <option value="'Noto Serif SC', serif">思源宋体</option>
-                      <option value="'LXGW WenKai', cursive">霞鹜文楷</option>
-                      <option value="'ZCOOL KuaiLe', cursive">站酷快乐体</option>
-                      <option value="'ZCOOL XiaoWei', cursive">站酷小薇体</option>
-                      <option value="'Long Cang', cursive">龙藏手写体</option>
-                      <option value="'Ma Shan Zheng', cursive">马善政</option>
-                      <option value="'Zhi Mang Xing', cursive">芝麻行动体</option>
-                      <option value="'Liu Jian Mao Cao', cursive">刘及目标草书</option>
-                      <option value="system-ui, sans-serif">系统默认</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label>正文字体</label>
-                    <select id="fontBody">
-                      <option value="'Noto Sans SC', sans-serif">思源黑体</option>
-                      <option value="'Noto Serif SC', serif">思源宋体</option>
-                      <option value="'LXGW WenKai', cursive">霞鹜文楷</option>
-                      <option value="'ZCOOL KuaiLe', cursive">站酷快乐体</option>
-                      <option value="'ZCOOL XiaoWei', cursive">站酷小薇体</option>
-                      <option value="'Long Cang', cursive">龙藏手写体</option>
-                      <option value="'Ma Shan Zheng', cursive">马善政</option>
-                      <option value="'Zhi Mang Xing', cursive">芝麻行动体</option>
-                      <option value="'Liu Jian Mao Cao', cursive">刘及目标草书</option>
-                      <option value="system-ui, sans-serif">系统默认</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="group row">
-                  <div>
-                    <div class="label-with-slider">
-                        <label>标题字号</label>
-                        <span class="range-value" id="sizeTitleValue">42px</span>
-                    </div>
-                    <input id="sizeTitle" type="range" min="20" max="80" step="1" value="42" />
-                  </div>
-                  <div>
-                    <div class="label-with-slider">
-                        <label>正文字号</label>
-                        <span class="range-value" id="sizeBodyValue">20px</span>
-                    </div>
-                    <input id="sizeBody" type="range" min="12" max="40" step="1" value="20" />
-                  </div>
-                </div>
-                 <div class="group">
-                    <div class="label-with-switch">
-                        <div class="label-with-slider" style="width: 100%;">
-                            <label for="lineHeight">正文行间距</label>
-                            <span class="range-value" id="lineHeightValue">1.60</span>
-                        </div>
-                        <label class="auto-switch">自动 <input type="checkbox" id="autoLineHeightEnabled" /></label>
-                    </div>
-                    <input id="lineHeight" type="range" min="1.0" max="2.5" step="0.05" value="1.6" />
-                 </div>
-                <div class="group row group-divider">
-                  <div>
-                    <label>标题颜色</label>
-                    <input id="colorTitle" type="color" value="#ffffff" />
-                    <div class="note" id="titleContrastHint"></div>
-                  </div>
-                  <div>
-                    <label>正文颜色</label>
-                    <input id="colorBody" type="color" value="#e5e7eb" />
-                    <div class="note" id="bodyContrastHint"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="accordion-group">
-              <div class="accordion-header"><h3>布局与间距</h3></div>
-              <div class="accordion-content">
-                <div class="group row">
-                    <div>
-                        <label>水平对齐</label>
-                        <div class="align-group" id="alignHorizontal">
-                          <button data-align="flex-start">左</button>
-                          <button data-align="center">中</button>
-                          <button data-align="flex-end">右</button>
-                        </div>
-                    </div>
-                    <div>
-                        <label>垂直对齐</label>
-                        <div class="align-group" id="alignVertical">
-                          <button data-align="flex-start">顶</button>
-                          <button data-align="center">中</button>
-                          <button data-align="flex-end">底</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="group">
-                  <div class="label-with-switch">
-                      <div class="label-with-slider" style="width: 100%;">
-                        <label for="padding">内边距</label>
-                        <span class="range-value" id="paddingValue">8%</span>
+                  <div class="group row">
+                      <div>
+                          <label>标题字体</label>
+                          <select id="fontTitle">
+                              <option value="'Noto Sans SC', sans-serif">思源黑体</option>
+                              <option value="'Noto Serif SC', serif">思源宋体</option>
+                              <option value="'LXGW WenKai', cursive">霞鹜文楷</option>
+                              <option value="'ZCOOL KuaiLe', cursive">站酷快乐体</option>
+                              <option value="'ZCOOL XiaoWei', cursive">站酷小薇体</option>
+                              <option value="'Long Cang', cursive">龙藏手写体</option>
+                              <option value="'Ma Shan Zheng', cursive">马善政</option>
+                              <option value="'Zhi Mang Xing', cursive">芝麻行动体</option>
+                              <option value="'Liu Jian Mao Cao', cursive">刘及目标草书</option>
+                              <option value="system-ui, sans-serif">系统默认</option>
+                          </select>
                       </div>
-                      <label class="auto-switch">自动 <input type="checkbox" id="autoPaddingEnabled" /></label>
+                      <div>
+                          <label>正文字体</label>
+                          <select id="fontBody">
+                              <option value="'Noto Sans SC', sans-serif">思源黑体</option>
+                              <option value="'Noto Serif SC', serif">思源宋体</option>
+                              <option value="'LXGW WenKai', cursive">霞鹜文楷</option>
+                              <option value="'ZCOOL KuaiLe', cursive">站酷快乐体</option>
+                              <option value="'ZCOOL XiaoWei', cursive">站酷小薇体</option>
+                              <option value="'Long Cang', cursive">龙藏手写体</option>
+                              <option value="'Ma Shan Zheng', cursive">马善政</option>
+                              <option value="'Zhi Mang Xing', cursive">芝麻行动体</option>
+                              <option value="'Liu Jian Mao Cao', cursive">刘及目标草书</option>
+                              <option value="system-ui, sans-serif">系统默认</option>
+                          </select>
+                      </div>
                   </div>
-                  <input id="padding" type="range" min="2" max="20" step="1" value="8" />
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-group">
-              <div class="accordion-header"><h3>边框与圆角</h3></div>
-              <div class="accordion-content">
-                <div class="group">
-                  <div class="label-with-switch">
-                      <label for="borderEnabled">显示边框</label>
-                      <input type="checkbox" id="borderEnabled" />
+                  <div class="group row">
+                      <div>
+                          <label>标题颜色</label>
+                          <input id="colorTitle" type="color" value="#ffffff" />
+                          <div class="note contrast-hint" id="titleContrastHint"></div>
+                      </div>
+                      <div>
+                          <label>正文颜色</label>
+                          <input id="colorBody" type="color" value="#e5e7eb" />
+                          <div class="note contrast-hint" id="bodyContrastHint"></div>
+                      </div>
                   </div>
-                </div>
-                <div class="group row" id="borderControls">
-                  <div>
+                  <div class="group row">
+                      <div>
+                          <div class="label-with-slider">
+                              <label>标题字号 (px)</label>
+                              <span class="range-value" id="sizeTitleValue">42px</span>
+                          </div>
+                          <input id="sizeTitle" type="range" min="16" max="120" step="1" value="42" />
+                      </div>
+                      <div>
+                          <div class="label-with-slider">
+                              <label>正文字号 (px)</label>
+                              <span class="range-value" id="sizeBodyValue">20px</span>
+                          </div>
+                          <input id="sizeBody" type="range" min="12" max="60" step="1" value="20" />
+                      </div>
+                  </div>
+                  <div class="group row">
+                    <div style="flex-grow: 1;">
+                      <div class="label-with-switch">
+                        <label for="autoLineHeightEnabled">自动行高</label>
+                        <input type="checkbox" id="autoLineHeightEnabled" checked />
+                      </div>
                       <div class="label-with-slider">
-                          <label>边框厚度</label>
-                          <span class="range-value" id="borderWidthValue">15px</span>
+                          <label>行高 (倍)</label>
+                          <span class="range-value" id="lineHeightValue">1.6</span>
                       </div>
-                      <input id="borderWidth" type="range" min="0" max="50" step="1" value="15" />
-                  </div>
-                  <div>
-                      <label>边框颜色</label>
-                      <input id="borderColor" type="color" value="#ffffff" />
-                  </div>
-                </div>
-                 <div class="group row">
-                    <div>
-                        <div class="label-with-slider">
-                            <label>外框圆角</label>
-                            <span class="range-value" id="radiusOuterValue">16px</span>
-                        </div>
-                        <input id="radiusOuter" type="range" min="0" max="60" step="1" value="16" />
+                      <input id="lineHeight" type="range" min="1" max="2.5" step="0.1" value="1.6" />
                     </div>
-                    <div>
-                        <div class="label-with-slider">
-                            <label>卡片圆角</label>
-                            <span class="range-value" id="radiusInnerValue">12px</span>
-                        </div>
-                        <input id="radiusInner" type="range" min="0" max="50" step="1" value="12" />
-                    </div>
-                </div>
+                  </div>
               </div>
-            </div>
+          </div>
 
+          <div class="accordion-group">
+              <div class="accordion-header"><h3>布局与边框</h3></div>
+              <div class="accordion-content">
+                  <div class="group row">
+                      <div>
+                          <label>水平对齐</label>
+                          <div class="toggle-group" id="alignHorizontal">
+                            <button data-align="flex-start" title="左对齐">左</button>
+                            <button data-align="center" class="active" title="居中">中</button>
+                            <button data-align="flex-end" title="右对齐">右</button>
+                          </div>
+                      </div>
+                      <div>
+                          <label>垂直对齐</label>
+                          <div class="toggle-group" id="alignVertical">
+                            <button data-align="flex-start" title="顶部对齐">顶</button>
+                            <button data-align="center" class="active" title="居中">中</button>
+                            <button data-align="flex-end" title="底部对齐">底</button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="group">
+                    <div class="label-with-switch">
+                        <label for="autoPaddingEnabled">自动边距</label>
+                        <input type="checkbox" id="autoPaddingEnabled" checked />
+                    </div>
+                      <div class="label-with-slider">
+                          <label>内边距 (百分比)</label>
+                          <span class="range-value" id="paddingValue">8%</span>
+                      </div>
+                      <input id="padding" type="range" min="0" max="20" step="1" value="8" />
+                      <div class="note">内边距是相对于卡片宽度或高度的百分比。</div>
+                  </div>
+
+                  <div class="group group-divider">
+                      <div class="label-with-switch">
+                        <label for="borderEnabled">启用外边框</label>
+                        <input type="checkbox" id="borderEnabled" />
+                      </div>
+                  </div>
+                  <div class="group row" id="borderControls" style="display: none;">
+                      <div>
+                          <div class="label-with-slider">
+                              <label>边框厚度 (px)</label>
+                              <span class="range-value" id="borderWidthValue">15px</span>
+                          </div>
+                          <input id="borderWidth" type="range" min="0" max="50" step="1" value="15" />
+                      </div>
+                      <div>
+                          <label>边框颜色</label>
+                          <input id="borderColor" type="color" value="#ffffff" />
+                      </div>
+                  </div>
+                  <div class="group row">
+                      <div>
+                          <div class="label-with-slider">
+                              <label>外框圆角</label>
+                              <span class="range-value" id="radiusOuterValue">16px</span>
+                          </div>
+                          <input id="radiusOuter" type="range" min="0" max="60" step="1" value="16" />
+                      </div>
+                      <div>
+                          <div class="label-with-slider">
+                              <label>卡片圆角</label>
+                              <span class="range-value" id="radiusInnerValue">12px</span>
+                          </div>
+                          <input id="radiusInner" type="range" min="0" max="50" step="1" value="12" />
+                      </div>
+                  </div>
+              </div>
+          </div>
         </div>
+
       </div>
-      
+
       <div class="tab-content" data-tab-panel="components">
-        
         <div class="accordion-group">
           <div class="accordion-header"><h3>水印</h3></div>
           <div class="accordion-content">
             <div class="group">
-                <label>水印类型</label>
-                <div class="radio-group" id="watermarkType">
-                    <label><input type="radio" name="watermark_type" value="none" checked> 无</label>
-                    <label><input type="radio" name="watermark_type" value="text"> 文字</label>
-                    <label><input type="radio" name="watermark_type" value="image"> 图片</label>
-                </div>
+              <label>水印类型</label>
+              <select id="watermarkType">
+                <option value="none">不显示</option>
+                <option value="text">文本水印</option>
+                <option value="image">图片水印</option>
+              </select>
             </div>
-            <div id="watermarkTextControls">
-                <div class="group">
-                    <label for="watermarkText">水印文字</label>
-                    <input id="watermarkText" type="text" placeholder="输入水印文字" maxlength="20" />
-                </div>
+            <div id="watermarkTextControls" style="display: none;">
+              <div class="group">
+                <label for="watermarkText">水印文本</label>
+                <input id="watermarkText" type="text" placeholder="如：@我的昵称" />
+              </div>
             </div>
-            <div id="watermarkImageControls">
-                <div class="group">
-                  <label for="watermarkImgUpload">上传图片水印 (≤2MB, PNG/JPG)</label>
-                  <input id="watermarkImgUpload" type="file" accept="image/png,image/jpeg" />
-                  <div class="note" id="watermarkSizeHint"></div>
-                  <button class="btn-secondary" id="clearWatermarkImg">清除图片水印</button>
-                </div>
+            <div id="watermarkImageControls" style="display: none;">
+              <div class="group">
+                <label for="watermarkImgUpload">上传水印图片 (≤2MB)</label>
+                <input id="watermarkImgUpload" type="file" accept="image/png,image/jpeg,image/webp" />
+              </div>
+              <div class="group">
+                <button class="btn-secondary" id="clearWatermarkImg">清除图片</button>
+              </div>
             </div>
-            <div id="watermarkCommonControls">
-                <div class="group">
-                    <label>水印位置</label>
-                    <select id="watermarkPosition">
-                        <option value="bottom-left">左下角</option>
-                        <option value="bottom-right">右下角</option>
-                        <option value="top-left">左上角</option>
-                        <option value="top-right">右上角</option>
-                        <option value="center">居中</option>
-                    </select>
+            <div id="watermarkCommonControls" style="display: none;">
+              <div class="group">
+                <label for="watermarkPosition">水印位置</label>
+                <select id="watermarkPosition">
+                  <option value="bottom-left">左下角</option>
+                  <option value="bottom-right">右下角</option>
+                  <option value="top-left">左上角</option>
+                  <option value="top-right">右上角</option>
+                  <option value="center">居中</option>
+                </select>
+              </div>
+              <div class="group row" id="watermarkSizeControl">
+                <div style="flex-grow: 1;">
+                  <div class="label-with-slider">
+                    <label>尺寸 (px)</label>
+                    <span class="range-value" id="watermarkSizeValue">14px</span>
+                  </div>
+                  <input id="watermarkSize" type="range" min="10" max="40" step="1" value="14" />
+                  <div class="note" id="watermarkSizeHint">仅对文本水印生效。</div>
                 </div>
-                <div class="group row">
-                    <div id="watermarkSizeControl">
-                        <div class="label-with-slider">
-                            <label>水印字号</label>
-                            <span class="range-value" id="watermarkSizeValue">14px</span>
-                        </div>
-                        <input id="watermarkSize" type="range" min="8" max="50" step="1" value="14" />
-                    </div>
-                    <div>
-                        <div class="label-with-slider">
-                            <label>水印不透明度</label>
-                            <span class="range-value" id="watermarkOpacityValue">0.70</span>
-                        </div>
-                        <input id="watermarkOpacity" type="range" min="0" max="1" step="0.05" value="0.7" />
-                    </div>
+              </div>
+              <div class="group">
+                <div class="label-with-slider">
+                    <label>不透明度</label>
+                    <span class="range-value" id="watermarkOpacityValue">0.70</span>
                 </div>
+                <input id="watermarkOpacity" type="range" min="0.1" max="1" step="0.01" value="0.7" />
+              </div>
             </div>
           </div>
         </div>
@@ -527,34 +556,35 @@
           <div class="accordion-header"><h3>二维码</h3></div>
           <div class="accordion-content">
             <div class="group">
-                <label>二维码</label>
-                <div class="radio-group" id="qrCodeEnabled">
-                    <label><input type="radio" name="qr_type" value="none" checked> 不显示</label>
-                    <label><input type="radio" name="qr_type" value="url"> 网址</label>
-                    <label><input type="radio" name="qr_type" value="text"> 文本</label>
-                </div>
+              <div class="label-with-switch">
+                <label for="qrCodeEnabled">显示二维码</label>
+                <select id="qrCodeEnabled">
+                  <option value="none">不显示</option>
+                  <option value="image">显示</option>
+                </select>
+              </div>
             </div>
             <div id="qrCodeControls" style="display: none;">
-                <div class="group">
-                    <label for="qrCodeValue">内容</label>
-                    <textarea id="qrCodeValue" placeholder="输入网址 (e.g., https://...) 或文本" rows="4"></textarea>
-                </div>
-                <div class="group">
-                    <div class="label-with-slider">
-                        <label>二维码尺寸 (百分比)</label>
-                        <span class="range-value" id="qrCodeSizeValue">15%</span>
-                    </div>
-                    <input id="qrCodeSize" type="range" min="5" max="50" step="1" value="15" />
-                    <div class="note">尺寸是相对于卡片较短边的百分比。</div>
-                </div>
-                <div class="group">
-                    <div class="label-with-slider">
-                        <label>边距 (px)</label>
-                        <span class="range-value" id="qrCodePaddingValue">10px</span>
-                    </div>
-                    <input id="qrCodePadding" type="range" min="0" max="50" step="1" value="10" />
-                    <div class="note">二维码距离卡片边缘的距离。</div>
-                </div>
+              <div class="group">
+                <label for="qrCodeValue">内容（链接或文本）</label>
+                <textarea id="qrCodeValue" placeholder="请输入二维码内容，如：https://www.example.com" rows="4"></textarea>
+              </div>
+              <div class="group">
+                  <div class="label-with-slider">
+                      <label>二维码尺寸 (百分比)</label>
+                      <span class="range-value" id="qrCodeSizeValue">15%</span>
+                  </div>
+                  <input id="qrCodeSize" type="range" min="5" max="50" step="1" value="15" />
+                  <div class="note">尺寸是相对于卡片较短边的百分比。</div>
+              </div>
+              <div class="group">
+                  <div class="label-with-slider">
+                      <label>边距 (px)</label>
+                      <span class="range-value" id="qrCodePaddingValue">10px</span>
+                  </div>
+                  <input id="qrCodePadding" type="range" min="0" max="50" step="1" value="10" />
+                  <div class="note">二维码距离卡片边缘的距离。</div>
+              </div>
             </div>
           </div>
         </div>
@@ -575,6 +605,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js" defer></script>
 </body>
 </html>

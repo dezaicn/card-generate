@@ -1,4 +1,4 @@
-﻿    (function () {
+﻿(function () {
 // --- DOM ELEMENTS ---
 const dom = {
   unifiedStylingEnabled: document.getElementById('unifiedStylingEnabled'),
@@ -31,6 +31,10 @@ const dom = {
   btnNextCard: document.getElementById('btn-next-card'),
   themeToggle: document.getElementById('themeToggle'),
   btnExportZip: document.getElementById('btn-export-zip'),
+  btnExportZipMobile: document.getElementById('btn-export-zip-mobile'),
+  headerMenuToggle: document.getElementById('header-menu-toggle'),
+  headerExpanded: document.getElementById('header-expanded'),
+  headerMain: document.querySelector('.header-main'),
   btnResetAll: document.getElementById('btn-reset-all'),
   btnApplyTheme: document.getElementById('btn-apply-theme'), 
   themeSelector: document.getElementById('theme-selector'), // [NEW]
@@ -91,8 +95,8 @@ const dom = {
   tabs: document.querySelectorAll('.tab-btn'),
   tabPanels: document.querySelectorAll('.tab-content'),
   wipeBtn: document.getElementById('wipe'),
-  saveConfigBtn: document.getElementById('btn-save-config'),
-  loadConfigBtn: document.getElementById('btn-load-config'),
+  // saveConfigBtn: document.getElementById('btn-save-config'), // REMOVED
+  // loadConfigBtn: document.getElementById('btn-load-config'), // REMOVED
   toast: document.getElementById('toast'),
   p: {
       borderContainer: document.getElementById('border-container-focused'),
@@ -141,6 +145,7 @@ const DEFAULT_PRESETS = [
 
 // THEMES array and related functions are now in theme/themes.js
 
+function random(min, max) { return Math.random() * (max - min) + min; } // 增加 random 函数
 function generatePleasingColor() { const hue = random(0, 360); const saturation = random(40, 100); const lightness = random(40, 80); return `hsl(${hue}, ${saturation}%, ${lightness}%)`; }
 let bgPresets = [];
 function generateAllPresets() {
@@ -223,7 +228,7 @@ function updateCardState(newState) {
       cardStates[activeCardIndex] = deepMerge(cardStates[activeCardIndex], newState);
       renderPreview();
       renderCardTab(activeCardIndex);
-      saveCardStatesToLocal();
+
   }
 }
 function updateGlobalState(newState) {
@@ -234,27 +239,15 @@ function updateGlobalState(newState) {
   globalSettings = deepMerge(globalSettings, newState);
   renderPreview();
   renderControls(); 
-  saveGlobalSettingsToLocal();
+ 
 }
-function saveCardStatesToLocal() { try { localStorage.setItem('cardGeneratorMultiStateV2', JSON.stringify(cardStates)); } catch (e) { console.error("Failed to save card states", e); } }
-function saveGlobalSettingsToLocal() { try { localStorage.setItem('cardGeneratorGlobalSettingsV2', JSON.stringify(globalSettings)); } catch (e) { console.error("Failed to save global settings", e); } }
 
 function loadState() {
-  try {
-      const savedGlobals = localStorage.getItem('cardGeneratorGlobalSettingsV2');
-      const defaultCopy = JSON.parse(JSON.stringify(defaultGlobalSettings));
-      globalSettings = savedGlobals ? deepMerge(defaultCopy, JSON.parse(savedGlobals)) : defaultCopy;
-  } catch(e) { globalSettings = JSON.parse(JSON.stringify(defaultGlobalSettings)); }
-  
+  globalSettings = JSON.parse(JSON.stringify(defaultGlobalSettings));
+  cardStates = createDefaultCards(7);
+
   document.body.className = '';
   document.body.classList.add(globalSettings.theme === 'dark' ? 'dark-mode' : 'light-mode');
-
-  try {
-      const savedCards = localStorage.getItem('cardGeneratorMultiStateV2');
-      cardStates = savedCards ? JSON.parse(savedCards) : createDefaultCards(7);
-  } catch(e) { 
-      cardStates = createDefaultCards(7); 
-  }
 }
 
 // --- CORE ACTIONS ---
@@ -276,7 +269,7 @@ function deleteCard(index) {
   const newActiveIndex = Math.max(0, activeCardIndex >= index ? activeCardIndex - 1 : activeCardIndex);
   renderCardSwitcher();
   switchCard(newActiveIndex);
-  saveCardStatesToLocal();
+ 
 }
 function switchCard(index) {
   if (index < 0 || index >= cardStates.length) return;
@@ -301,10 +294,7 @@ function updateNavButtons() {
 }
 function resetAll() {
   if (!confirm('确定要重置所有卡片和设置吗？此操作将清空所有内容且无法撤销。')) { return; }
-  try {
-      localStorage.removeItem('cardGeneratorMultiStateV2');
-      localStorage.removeItem('cardGeneratorGlobalSettingsV2');
-  } catch (e) { console.error("Failed to clear local storage", e); }
+  // 移除了 try/catch 清除 localStorage 的逻辑
   cardStates = createDefaultCards(7);
   globalSettings = JSON.parse(JSON.stringify(defaultGlobalSettings));
   
@@ -356,8 +346,6 @@ function handleDrop(e) {
         const newCardStates = reorderArray(cardStates, dragSrcIndex, dropTargetIndex);
         cardStates = newCardStates;
         activeCardIndex = cardStates.indexOf(activeCardIdentity);
-        
-        saveCardStatesToLocal();
         renderCardSwitcher(); 
         renderControls();
     }
@@ -547,6 +535,7 @@ function renderQRCode() {
     }
 }
 
+// 修复BUG: 还原 renderControls 函数，使其正确引用 IIFE 作用域内的 globalSettings 变量
 function renderControls() {
   if (!cardStates[activeCardIndex]) return; // Guard clause
   const cardState = cardStates[activeCardIndex];
@@ -559,7 +548,10 @@ function renderControls() {
   dom.countBody.textContent = cardState.body.text.length;
   dom.contentImgEnabled.checked = cardState.content.image.enabled;
   dom.contentImgSideBySide.checked = cardState.content.image.sideBySide;
-  document.querySelector(`input[name="content_img_pos"][value="${cardState.content.image.position}"]`).checked = true;
+  // 安全地设置 radio 按钮
+  const posInput = document.querySelector(`input[name="content_img_pos"][value="${cardState.content.image.position}"]`);
+  if (posInput) posInput.checked = true;
+
   
   dom.maskOpacity.value = cardState.background.maskOpacity;
   document.querySelectorAll('.thumb').forEach(t => t.classList.toggle('active', t.dataset.bg === cardState.background.image));
@@ -574,6 +566,7 @@ function renderControls() {
   document.querySelectorAll('#alignHorizontal button').forEach(b => b.classList.toggle('active', b.dataset.align === cardState.layout.alignHorizontal));
   document.querySelectorAll('#alignVertical button').forEach(b => b.classList.toggle('active', b.dataset.align === cardState.layout.alignVertical));
   
+  // 修复BUG：正确引用局部的 globalSettings 变量
   const { unifiedStyling } = globalSettings;
   dom.unifiedStylingEnabled.checked = unifiedStyling.enabled;
   dom.unifiedStylingControls.style.display = unifiedStyling.enabled ? 'block' : 'none';
@@ -589,11 +582,13 @@ function renderControls() {
   document.querySelectorAll('#unifiedAlignHorizontal button').forEach(b => b.classList.toggle('active', b.dataset.align === unifiedStyling.alignHorizontal));
   document.querySelectorAll('#unifiedAlignVertical button').forEach(b => b.classList.toggle('active', b.dataset.align === unifiedStyling.alignVertical));
   
+  // 修复BUG：正确引用局部的 globalSettings 变量
   const wm = globalSettings.watermark;
   document.querySelector(`input[name="watermark_type"][value="${wm.type}"]`).checked = true;
   dom.watermarkText.value = wm.text; dom.watermarkPosition.value = wm.position;
   dom.watermarkSize.value = wm.size; dom.watermarkOpacity.value = wm.opacity;
   
+  // 修复BUG：正确引用局部的 globalSettings 变量
   const qr = globalSettings.qrCode;
   document.querySelector(`input[name="qr_type"][value="${qr.enabled}"]`).checked = true;
   dom.qrCodeControls.style.display = qr.enabled !== 'none' ? 'block' : 'none';
@@ -657,7 +652,13 @@ function setupAccordionListeners() {
 // [NEW] Populate theme selector dropdown
 function populateThemeSelector() {
     dom.themeSelector.innerHTML = ''; // Clear
-    THEMES.forEach((theme, index) => {
+    // 修复BUG: 访问全局 window.THEMES
+    const themes = window.THEMES;
+    if (typeof themes === 'undefined') {
+        console.error("Theme data (window.THEMES) is not loaded.");
+        return; 
+    }
+    themes.forEach((theme, index) => {
         const option = document.createElement('option');
         option.value = index;
         option.textContent = theme.name;
@@ -778,11 +779,37 @@ function setupEventListeners() {
   dom.wipeBtn.addEventListener('click', () => { const { title, body } = JSON.parse(JSON.stringify(defaultCardState)); updateCardState({ title: { text: title.text, font: title.font, size: title.size }, body }); renderControls(); });
   
   dom.btnExportZip.addEventListener('click', exportAllAsZip);
-  dom.saveConfigBtn.addEventListener('click', saveConfig);
-  dom.loadConfigBtn.addEventListener('click', loadConfig);
+  if (dom.btnExportZipMobile) {
+    dom.btnExportZipMobile.addEventListener('click', exportAllAsZip);
+  }
+  // dom.saveConfigBtn.addEventListener('click', saveConfig); // REMOVED
+  // dom.loadConfigBtn.addEventListener('click', loadConfig); // REMOVED
   dom.btnCopyFocused.addEventListener('click', copyFocusedCard);
   dom.btnExportFocused.addEventListener('click', exportFocusedCard);
   dom.btnApplyTheme.addEventListener('click', applyThematicRecommendation);
+  
+  // 移动端折叠菜单切换
+  if (dom.headerMenuToggle && dom.headerExpanded) {
+    dom.headerMenuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = dom.headerExpanded.classList.toggle('active');
+      dom.headerMenuToggle.classList.toggle('active', isActive);
+    });
+    
+    // 点击外部区域关闭菜单（仅在移动端）
+    const handleOutsideClick = (e) => {
+      if (window.innerWidth <= 768 && dom.headerExpanded && dom.headerMenuToggle) {
+        const isClickInside = dom.headerExpanded.contains(e.target) || 
+                            dom.headerMenuToggle.contains(e.target) ||
+                            (dom.headerMain && dom.headerMain.contains(e.target));
+        if (!isClickInside && dom.headerExpanded.classList.contains('active')) {
+          dom.headerExpanded.classList.remove('active');
+          dom.headerMenuToggle.classList.remove('active');
+        }
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+  }
   
   // 方向按钮事件
   dom.btnPrevCard.addEventListener('click', () => {
@@ -951,30 +978,37 @@ async function exportAllAsZip() {
     } 
 }
 
-function saveConfig() { const config = { globalSettings, cardStates }; navigator.clipboard.writeText(JSON.stringify(config, null, 2)).then(() => toast('所有配置已复制')).catch(() => toast('复制失败')); }
-async function loadConfig() { if (!confirm('这将覆盖当前所有卡片和全局设置，确定要从剪贴板载入配置吗？')) return; try { const config = JSON.parse(await navigator.clipboard.readText()); if (config.cardStates && config.globalSettings) { cardStates = config.cardStates; globalSettings = deepMerge(JSON.parse(JSON.stringify(defaultGlobalSettings)), config.globalSettings); activeCardIndex = 0; renderApp(); switchCard(0); toast('配置已成功载入'); } else { toast('剪贴板内容不是有效的配置'); } } catch(err) { toast('载入失败，请检查剪贴板内容'); } }
+// REMOVED: function saveConfig() { ... }
+// REMOVED: async function loadConfig() { ... }
+
 let toastTimer; function toast(msg) { dom.toast.textContent = msg; dom.toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => dom.toast.classList.remove('show'), 2500); }
 function generateDefaultFilename() { const d = new Date(); return `${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}-${d.getHours().toString().padStart(2,'0')}${d.getMinutes().toString().padStart(2,'0')}${d.getSeconds().toString().padStart(2,'0')}`; }
 function mapRange(value, inMin, inMax, outMin, outMax) { const val = Math.max(inMin, Math.min(value, inMax)); return (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin; }
 function escapeHtml(text) { const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }; return text.replace(/[&<>"']/g, m => map[m]); }
 function parseMarkdownTable(markdown) { const lines = markdown.trim().split('\n').map(l => l.trim()).filter(Boolean); if (lines.length < 2 || !lines.every(line => line.startsWith('|') && line.endsWith('|'))) return null; if (!/^\|(?:\s*:?-+:?\s*\|)+$/.test(lines[1])) return null; const headerCells = lines[0].slice(1, -1).split('|').map(cell => `<th>${escapeHtml(cell.trim())}</th>`).join(''); let bodyRows = ''; for (let i = 2; i < lines.length; i++) { const cells = lines[i].slice(1, -1).split('|'); if (cells.length === headerCells.match(/<th>/g).length) { bodyRows += `<tr>${cells.map(cell => `<td>${escapeHtml(cell.trim())}</td>`).join('')}</tr>`; } } if (!headerCells || !bodyRows) return null; return `<table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table>`; }
 
-// [MODIFIED] Thematic recommendation function now uses the selector
+// [MODIFIED] Thematic recommendation function
 function applyThematicRecommendation() {
   if (cardStates.length === 0) {
     toast("没有卡片可应用主题");
     return;
   }
   
+  // 修复BUG: 访问全局 window.THEMES
+  const themes = window.THEMES;
+  if (typeof themes === 'undefined') {
+      toast("主题数据未加载");
+      return;
+  }
+
   // Get selected theme
   const selectedThemeIndex = parseInt(dom.themeSelector.value, 10);
-  const theme = THEMES[selectedThemeIndex];
+  const theme = themes[selectedThemeIndex];
   if (!theme) {
       toast("未找到所选主题");
       return;
   }
   
-  // [MODIFIED] 检查主题是否有 hueRange，这是新逻辑所必需的
   if (!theme.hueRange) {
       toast("主题配置不完整，缺少 hueRange");
       return;
@@ -982,43 +1016,37 @@ function applyThematicRecommendation() {
   
   const targetCards = cardStates.length; 
   
-  // [MODIFIED] 确认提示已移除
-  
   for (let i = 0; i < targetCards; i++) { 
     const state = cardStates[i];
 
-    // [MODIFIED] 此处逻辑已修改：
-    // 1. 样式(字体/颜色/布局) 使用主题的 "封面" 样式
-    // 2. 背景(image) 调用新的 generateThematicGradient 函数
     const newState = {
       title: {
         font: theme.fontTitle,
-        color: theme.colorTitleCover, // 始终使用封面标题颜色
-        size: 52 // 始终使用封面标题字号
+        color: theme.colorTitleCover, 
+        size: 52 
       },
       body: {
         font: theme.fontBody,
-        color: theme.colorBodyCover, // 始终使用封面正文颜色
-        size: 20, // 始终使用封面正文字号
+        color: theme.colorBodyCover, 
+        size: 20, 
         lineHeight: 1.6,
         autoLineHeight: false
       },
       background: {
-        // [MODIFIED] 核心修改：为每张卡片生成一个匹配主题色系的渐变
-        image: generateThematicGradient(theme),
-        maskOpacity: theme.maskCover // 始终使用封面蒙版
+        image: window.generateThematicGradient(theme),
+        maskOpacity: theme.maskCover 
       },
       layout: {
-        alignHorizontal: 'center', // 始终居中
-        alignVertical: (state.body.text.length > 200 ? 'flex-start' : 'center'), // 文本长则居上，短则居中
-        padding: 10, // 始终使用封面内边距
+        alignHorizontal: 'center', 
+        alignVertical: (state.body.text.length > 200 ? 'flex-start' : 'center'), 
+        padding: 10, 
         autoPadding: false,
-        border: { enabled: false, width: 0, color: '#ffffff' }, // Disable borders
-        radius: { outer: 16, inner: 12 } // Consistent radius
+        border: { enabled: false, width: 0, color: '#ffffff' }, 
+        radius: { outer: 16, inner: 12 } 
       },
       content: {
         image: {
-            ...(state.content.image || {}), // 增加健壮性
+            ...(state.content.image || {}), 
             enabled: false,
             sideBySide: false,
         }
@@ -1036,6 +1064,8 @@ function applyThematicRecommendation() {
   switchCard(activeCardIndex); // 保持在当前卡片索引
   toast(`已应用 "${theme.name}" 主题色系`);
 }
+
+
 
 function updateContrastHints() { /* Placeholder */ }
 function updateWatermarkSizeHint() { const preview = dom.p.preview; if (!preview || globalSettings.watermark.type !== 'image') return; const size = Math.round(Math.min(preview.clientWidth, preview.clientHeight) * (globalSettings.watermark.position === 'center' ? 0.5 : 0.2)); dom.watermarkSizeHint.textContent = `基于当前布局，推荐尺寸: ${size} × ${size} px`; }
@@ -1145,15 +1175,4 @@ function init() {
 
 init();
     
-
-
-
-
-
-
-
-
-
-
-
 })();

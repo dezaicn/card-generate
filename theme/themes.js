@@ -1,4 +1,4 @@
-﻿const THEMES = [
+﻿window.THEMES = [
   {
     name: "深海蓝",
     fontTitle: "'Noto Sans SC', sans-serif", fontBody: "'Noto Sans SC', sans-serif",
@@ -140,7 +140,7 @@
 
 function random(min, max) { return Math.random() * (max - min) + min; }
 	  
-	  // [NEW] 新增函数：根据主题配置生成颜色
+// [NEW] 新增函数：根据主题配置生成颜色
 function generateThematicColor(theme) {
     const hue = random(theme.hueRange[0], theme.hueRange[1]);
     const saturation = random(theme.saturationRange?.[0] ?? 40, theme.saturationRange?.[1] ?? 100);
@@ -148,13 +148,16 @@ function generateThematicColor(theme) {
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
-// [NEW] 新增函数：根据主题生成渐变背景
-function generateThematicGradient(theme) {
+// [FIXED] 修正语法：使用 = function(...) 进行赋值
+window.generateThematicGradient = function(theme) {
     const deg = Math.floor(random(0, 360));
     const color1 = generateThematicColor(theme);
     const color2 = generateThematicColor(theme);
     return `linear-gradient(${deg}deg, ${color1}, ${color2})`;
-}
+}; // <-- 注意这里的分号
 	  
 function generatePleasingColor() { const hue = random(0, 360); const saturation = random(40, 100); const lightness = random(40, 80); return `hsl(${hue}, ${saturation}%, ${lightness}%)`; }
 let bgPresets = [];
+
+
+// [FIXED] 删除了文件末尾多余的 '}'
